@@ -14,19 +14,29 @@ class ColorRGB{
 
     }
 
-    from(c){
+    static from(c){
 
-        this.#r = v.getR;
-        this.#g = v.getG;
-        this.#b = v.getB;
+        return new ColorRGB(
+            c.getR(),
+            c.getG(),
+            c.getB()
+        )
 
     }
 
-    multiply(colorRGB){
+    multiplyRGB(colorRGB){
 
         this.#r *= colorRGB.getR();
-        this.#r *= colorRGB.getG();
-        this.#r *= colorRGB.getB();
+        this.#g *= colorRGB.getG();
+        this.#b *= colorRGB.getB();
+
+    }
+
+    multiply(scalar){
+
+        this.#r *= scalar;
+        this.#g *= scalar;
+        this.#b *= scalar;
 
     }
 
@@ -58,6 +68,18 @@ class Point3D{
         this.#x = x;
         this.#y = y;
         this.#z = z;
+
+    }
+
+    multiply(v){
+
+        return new Point3D(
+
+            this.#x * v,
+            this.#y * v,
+            this.#z * v
+
+        )
 
     }
 
@@ -135,9 +157,13 @@ class Vector3D{
     }
 
     multiply(scalar){
-        this.#x *= scalar;
-        this.#y *= scalar;
-        this.#z *= scalar;
+
+        return new Vector3D(
+            this.#x * scalar,
+            this.#y * scalar,
+            this.#z * scalar
+        )
+
     }
 
     getX(){
@@ -199,13 +225,13 @@ class Material{
 
     setAlbedo(a){
 
-        this.albedo = a;
+        this.#albedo = a;
 
     }
 
     setReflectivity(r){
 
-        this.reflectivity = Math.min(Math.max(0, r), 1);
+        this.#reflectivity = Math.min(Math.max(0, r), 1);
 
     }
 
@@ -287,14 +313,26 @@ class Sphere extends SceneObject{
 
         let delta = Math.pow(b, 2) - 4 * a * c;
 
-        let t0 = ( -b ) / ( 2 * a );
+        if(delta < 0) return null
+
         let t1 = ( -b + Math.sqrt(delta) ) / ( 2 * a );
         let t2 = ( -b - Math.sqrt(delta) ) / ( 2 * a );
 
-        if(delta < 0) return null
-        else if (delta = 0) return {hitPoints: [ t0 ], material: this.material}
-        else return { hitPoints: [ t1, t2 ], material: this.material }
+        let hits = [];
+        if (t1 > 0) hits.push(t1);
+        if (t2 > 0) hits.push(t2);
 
+        if (hits.length === 0) return null;
+        return { hitPoints: hits, material: this.material };
+
+    }
+
+}
+
+class LightSource extends SceneObject{
+
+    constructor(center){
+        super(center, null)
     }
 
 }
@@ -354,6 +392,7 @@ class SceneCamera{
 class Scene{
 
     #objectList = [];
+    #lighSources = [];
 
     #skyboxColor;
 
@@ -369,9 +408,19 @@ class Scene{
 
     }
 
+    addLightSource(point3D){
+        this.#lighSources.push(point3D)
+    }
+
     getScene(){
 
         return this.#objectList;
+
+    }
+
+    getSceneLight(){
+
+        return this.#lighSources;
 
     }
 
@@ -388,6 +437,8 @@ class Renderer{
     #canvas;
     #ctx;
 
+    #max_bounces = 1;
+
     constructor(canvas, sceneCamera, scene){
 
         this.#canvas = canvas;
@@ -399,7 +450,7 @@ class Renderer{
         this.canvasInit();
     }
 
-    castRay(ray, object){
+    #castRay(ray, object){
 
         let hitData = object.intersect(ray);
 
@@ -416,7 +467,56 @@ class Renderer{
 
         }
 
+    }
 
+    #intersectScene(ray){
+
+        let closestObject = null;
+        let smallestDist = Infinity;
+
+        this.#scene.getScene().forEach( sceneObject => {
+
+            let data = this.#castRay(ray,sceneObject);
+            if(data != null && data.dist < smallestDist){
+
+                smallestDist = data.dist;
+                closestObject = data;
+
+            }
+
+        });
+
+        return closestObject;
+
+    }
+
+    #castShadowRay(hitData) {
+
+        let totalLight = 0;
+
+        this.#scene.getSceneLight().forEach(lightSource => {
+
+            let vectorToLight = Vector3D.fromPoints3D(hitData.hitPoint, lightSource.center);
+            let distanceToLight = vectorToLight.len();
+            vectorToLight = vectorToLight.norm()
+
+            let offsetPoint = new Point3D(
+                hitData.hitPoint.getX() + hitData.surfaceNormal.getX() * 0.00001,
+                hitData.hitPoint.getY() + hitData.surfaceNormal.getY() * 0.00001,
+                hitData.hitPoint.getZ() + hitData.surfaceNormal.getZ() * 0.00001
+            );
+
+            let shadowRay = new Ray(offsetPoint, vectorToLight);
+            let obstacle = this.#intersectScene(shadowRay);
+
+            if (obstacle == null || obstacle.dist > distanceToLight) {
+                let lambertCosine = vectorToLight.dot(hitData.surfaceNormal);
+                totalLight += Math.max(0, lambertCosine);
+            }
+
+        });
+
+        return totalLight;
     }
 
     renderScene(){
@@ -427,32 +527,35 @@ class Renderer{
         for(let z = 0; z < vpH; z++){
             for(let x = 0; x < vpW; x++){
                 
-                let viewPortCoords = this.#sceneCamera.screenToVp(x,z);
-                let ray = this.#sceneCamera.getRay(viewPortCoords);
+                let vpPoint = this.#sceneCamera.screenToVp(x,z);
+                let ray = this.#sceneCamera.getRay(vpPoint);
 
-                let objectHit = false;
+                let brightness = 0;
+                let color = new ColorRGB(1,1,1);
+                
+                let sceneData = this.#intersectScene(ray);
 
-                this.#scene.getScene().forEach( object => {
+                if(sceneData == null) color = this.#scene.getSkyboxColor();
+                else{
 
-                    let hitData = this.castRay(ray, object);
+                    let materialColor = ColorRGB.from(sceneData.hitMaterial.getAlbedo());
+                    materialColor.multiply(1 - sceneData.hitMaterial.getReflectivity());
 
+                    color.multiplyRGB(materialColor);
+                    brightness = this.#castShadowRay(sceneData);
 
-                    if(hitData != null) objectHit = true;
-                    
+                    color.multiply(brightness)
 
-                })
-
-                if(objectHit) this.#ctx.fillStyle = "red"
-                else this.#ctx.fillStyle = "black";
-
-                this.#ctx.fillRect(x,z,1,1)
+                }
+                
+                this.#ctx.fillStyle = color.get();
+                this.#ctx.fillRect(x,z,1,1);
             }
         }
 
     }
 
     canvasInit(){
-
 
         this.#canvas.width = this.#sceneCamera.getVpWidth();
         this.#canvas.height = this.#sceneCamera.getVpHeight();
@@ -464,19 +567,49 @@ let mat1 = new Material();
 mat1.setAlbedo(
     new ColorRGB(0.5,0.2,0)
 )
-mat1.setReflectivity(0.1)
+mat1.setReflectivity(0)
 
-let testSphere = new Sphere(new Point3D(0,0,0),4,mat1)
+let mat2 = new Material();
+mat2.setAlbedo(
+    new ColorRGB(1,0,0)
+)
+mat2.setReflectivity(0)
+
+let mat3 = new Material();
+mat3.setAlbedo(
+    new ColorRGB(0,1,0)
+)
+mat3.setReflectivity(0)
+
+
+let testSphere1 = new Sphere(new Point3D(0,0,0),10,mat1)
+
+let testSphere2 = new Sphere(new Point3D(10,-14,0),2,mat2)
+
+let testSphere3 = new Sphere(new Point3D(-10,0,0),2,mat3)
 
 let testCamera = new SceneCamera(
-    new Point3D(0,-5,0),
-    300,
-    300,
-    45
+    new Point3D(0,-40,0),
+    500,
+    500,
+    300 / (2 * Math.tan(70/2))
 )
 
-let testScene = new Scene();
-testScene.addObject(testSphere);
+let testScene = new Scene(new ColorRGB(0,0,0));
+
+testScene.addObject(testSphere1);
+testScene.addObject(testSphere2);
+//testScene.addObject(testSphere3);
+
+let testLightSource1 = new LightSource(new Point3D(
+    16,
+    -24,
+    0
+))
+
+
+testScene.addLightSource(testLightSource1)
+//testScene.addLightSource(testLightSource2)
 
 let testRenderer = new Renderer(canv,testCamera,testScene);
 testRenderer.renderScene();
