@@ -83,6 +83,16 @@ class Point3D{
 
     }
 
+    vectorMove(vector,scalar){
+
+        return new Point3D(
+                this.#x + vector.getX() * scalar,
+                this.#y + vector.getY() * scalar,
+                this.#z + vector.getZ() * scalar
+        );
+
+    }
+
     distanceFrom(point){
 
         return Math.sqrt( Math.pow(this.#x - point.getX(), 2) + Math.pow(this.#y - point.getY(), 2) + Math.pow(this.#z - point.getZ(), 2) )
@@ -262,7 +272,11 @@ class SceneObject{
     }
 
     intersect(ray){
-        return 0;
+        return null;
+    }
+
+    getSurfaceNormal(point){
+        return null;
     }
 
     setX(newX){
@@ -318,12 +332,18 @@ class Sphere extends SceneObject{
         let t1 = ( -b + Math.sqrt(delta) ) / ( 2 * a );
         let t2 = ( -b - Math.sqrt(delta) ) / ( 2 * a );
 
-        let hits = [];
-        if (t1 > 0) hits.push(t1);
-        if (t2 > 0) hits.push(t2);
+        let solution = [];
+        if (t1 > 0) solution.push(t1);
+        if (t2 > 0) solution.push(t2);
 
-        if (hits.length === 0) return null;
-        return { hitPoints: hits, material: this.material };
+        if (solution.length === 0) return null;
+        return { hitPoints: solution, material: this.material };
+
+    }
+
+    getSurfaceNormal(point){
+
+        return Vector3D.fromPoints3D(this.center, point).norm();
 
     }
 
@@ -331,10 +351,20 @@ class Sphere extends SceneObject{
 
 class LightSource extends SceneObject{
 
-    constructor(center){
+    #intensity;
+
+    constructor(center, intensity){
         super(center, null)
+
+        this.#intensity = intensity;
+        
     }
 
+    getIntensity(){
+
+        return this.#intensity;
+
+    }
 }
 
 
@@ -462,7 +492,7 @@ class Renderer{
 
             hitPoint: closestHitPoint,
             hitMaterial: hitData.material,
-            surfaceNormal: Vector3D.fromPoints3D(object.center,closestHitPoint).norm(),
+            surfaceNormal: object.getSurfaceNormal(closestHitPoint),
             dist: closestHitPoint.distanceFrom(ray.getOrigin())
 
         }
@@ -500,18 +530,13 @@ class Renderer{
             let distanceToLight = vectorToLight.len();
             vectorToLight = vectorToLight.norm()
 
-            let offsetPoint = new Point3D(
-                hitData.hitPoint.getX() + hitData.surfaceNormal.getX() * 0.00001,
-                hitData.hitPoint.getY() + hitData.surfaceNormal.getY() * 0.00001,
-                hitData.hitPoint.getZ() + hitData.surfaceNormal.getZ() * 0.00001
-            );
 
-            let shadowRay = new Ray(offsetPoint, vectorToLight);
+            let shadowRay = new Ray(hitData.hitPoint.vectorMove(hitData.surfaceNormal,0.00001), vectorToLight);
             let obstacle = this.#intersectScene(shadowRay);
 
             if (obstacle == null || obstacle.dist > distanceToLight) {
                 let lambertCosine = vectorToLight.dot(hitData.surfaceNormal);
-                totalLight += Math.max(0, lambertCosine);
+                totalLight += Math.max(0, lambertCosine) * lightSource.getIntensity();
             }
 
         });
@@ -563,53 +588,76 @@ class Renderer{
     }
 }
 
-let mat1 = new Material();
-mat1.setAlbedo(
-    new ColorRGB(0.5,0.2,0)
-)
-mat1.setReflectivity(0)
+// DEMO SCENE
 
-let mat2 = new Material();
-mat2.setAlbedo(
-    new ColorRGB(1,0,0)
-)
-mat2.setReflectivity(0)
-
-let mat3 = new Material();
-mat3.setAlbedo(
-    new ColorRGB(0,1,0)
-)
-mat3.setReflectivity(0)
-
-
-let testSphere1 = new Sphere(new Point3D(0,0,0),10,mat1)
-
-let testSphere2 = new Sphere(new Point3D(10,-14,0),2,mat2)
-
-let testSphere3 = new Sphere(new Point3D(-10,0,0),2,mat3)
-
-let testCamera = new SceneCamera(
-    new Point3D(0,-40,0),
+let demoCamera = new SceneCamera(
+    new Point3D(0,-20,0),
     500,
     500,
     300 / (2 * Math.tan(70/2))
 )
 
-let testScene = new Scene(new ColorRGB(0,0,0));
+let demoScene = new Scene(new ColorRGB(0,0,0));
 
-testScene.addObject(testSphere1);
-testScene.addObject(testSphere2);
-//testScene.addObject(testSphere3);
+let wallMaterial = new Material();
+wallMaterial.setAlbedo(
+    new ColorRGB(0.85,0.85,0.85)
+)
+wallMaterial.setReflectivity(0)
 
-let testLightSource1 = new LightSource(new Point3D(
-    16,
-    -24,
-    0
-))
+let material1 = new Material();
+material1.setAlbedo(
+    new ColorRGB(0.85,0.15,0.15)
+)
+material1.setReflectivity(0)
+
+let material2 = new Material();
+material2.setAlbedo(
+    new ColorRGB(0.40,0.80,0.05)
+)
+material2.setReflectivity(0)
+
+let material3 = new Material();
+material3.setAlbedo(
+    new ColorRGB(0.20,0.15,0.90)
+)
+material3.setReflectivity(0)
+
+let ceil = new Sphere(new Point3D(0,0,-1010),1000,wallMaterial)
+let wallL = new Sphere(new Point3D(-1010,0,0),1000,wallMaterial)
+let wallR = new Sphere(new Point3D(1010,0,0),1000,wallMaterial)
+let floor = new Sphere(new Point3D(0,0,1010),1000,wallMaterial)
+let wallB = new Sphere(new Point3D(0,1010,0),1000,wallMaterial)
+
+let sphere1 = new Sphere(new Point3D(-6,6,7),2.5,material1)
+let sphere2 = new Sphere(new Point3D(3,2,4),5,material2)
+let sphere3 = new Sphere(new Point3D(-2,-3,8),3,material3)
+
+demoScene.addObject(sphere1);
+demoScene.addObject(sphere2);
+demoScene.addObject(sphere3);
+
+demoScene.addObject(floor);
+demoScene.addObject(wallL);
+demoScene.addObject(wallR);
+demoScene.addObject(wallB);
+demoScene.addObject(ceil);
+
+let lightSource1 = new LightSource(new Point3D(
+    0,
+    6,
+    -7
+), 0.6)
+
+let lightSource2 = new LightSource(new Point3D(
+    0,
+    -6,
+    -7
+), 0.6)
+
+demoScene.addLightSource(lightSource1)
+demoScene.addLightSource(lightSource2)
 
 
-testScene.addLightSource(testLightSource1)
-//testScene.addLightSource(testLightSource2)
-
-let testRenderer = new Renderer(canv,testCamera,testScene);
-testRenderer.renderScene();
+let renderer = new Renderer(canv,demoCamera,demoScene);
+renderer.renderScene();
