@@ -24,19 +24,33 @@ class ColorRGB{
 
     }
 
+    averageRGB(colorRGB){
+
+        return new ColorRGB(
+            (this.#r + colorRGB.getR()) / 2,
+            (this.#g + colorRGB.getG()) / 2,
+            (this.#b + colorRGB.getB()) / 2
+        )
+
+    }
+
     multiplyRGB(colorRGB){
 
-        this.#r *= colorRGB.getR();
-        this.#g *= colorRGB.getG();
-        this.#b *= colorRGB.getB();
+        return new ColorRGB(
+            this.#r * colorRGB.getR(),
+            this.#g * colorRGB.getG(),
+            this.#b * colorRGB.getB()
+        )
 
     }
 
     multiply(scalar){
 
-        this.#r *= scalar;
-        this.#g *= scalar;
-        this.#b *= scalar;
+        return new ColorRGB(
+            this.#r * scalar,
+            this.#g * scalar,
+            this.#b * scalar
+        )
 
     }
 
@@ -395,6 +409,21 @@ class SceneCamera{
 
     }
 
+    getRayJitter(viewPortPoint){
+
+        let randomPoint = new Point3D(
+            viewPortPoint.getX() +  Math.random() - 0.5,
+            viewPortPoint.getY(),
+            viewPortPoint.getZ() +  Math.random() - 0.5
+        )
+
+        return new Ray(
+            this.#origin,
+            Vector3D.fromPoints3D(this.#origin,randomPoint).norm()
+        );
+
+    }
+
     getVpHeight(){
 
         return this.#vpHeight;
@@ -468,6 +497,7 @@ class Renderer{
     #ctx;
 
     #max_bounces = 1;
+    #samples_per_pixel = 32;
 
     constructor(canvas, sceneCamera, scene){
 
@@ -552,28 +582,54 @@ class Renderer{
         for(let z = 0; z < vpH; z++){
             for(let x = 0; x < vpW; x++){
                 
+
                 let vpPoint = this.#sceneCamera.screenToVp(x,z);
-                let ray = this.#sceneCamera.getRay(vpPoint);
 
-                let brightness = 0;
-                let color = new ColorRGB(1,1,1);
-                
-                let sceneData = this.#intersectScene(ray);
+                let colorsToAverage = [];
 
-                if(sceneData == null) color = this.#scene.getSkyboxColor();
-                else{
+                for(let s = 0; s < this.#samples_per_pixel; s++){
 
-                    let materialColor = ColorRGB.from(sceneData.hitMaterial.getAlbedo());
-                    materialColor.multiply(1 - sceneData.hitMaterial.getReflectivity());
+                    let brightness = 0;
+                    let color = new ColorRGB(1,1,1);
+                    
+                    let ray = this.#sceneCamera.getRayJitter(vpPoint);
+                    
+                    let sceneData = this.#intersectScene(ray);
 
-                    color.multiplyRGB(materialColor);
-                    brightness = this.#castShadowRay(sceneData);
+                    if(sceneData == null) color = this.#scene.getSkyboxColor();
+                    else{
 
-                    color.multiply(brightness)
+                        let materialColor = ColorRGB.from(sceneData.hitMaterial.getAlbedo());
+                        //materialColor.multiply(1 - sceneData.hitMaterial.getReflectivity());
+
+                        color = color.multiplyRGB(materialColor);
+                        brightness = this.#castShadowRay(sceneData);
+
+                        color = color.multiply(brightness)
+
+                    }
+
+                    colorsToAverage.push(color);
 
                 }
-                
-                this.#ctx.fillStyle = color.get();
+
+                let r = 0;
+                let g = 0;
+                let b = 0;
+
+                colorsToAverage.forEach(color => {
+                    r += color.getR();
+                    g += color.getG();
+                    b += color.getB();
+                });
+
+                let averagePixelColor = new ColorRGB(
+                    r / this.#samples_per_pixel,
+                    g / this.#samples_per_pixel,
+                    b / this.#samples_per_pixel
+                )
+
+                this.#ctx.fillStyle = averagePixelColor.get();
                 this.#ctx.fillRect(x,z,1,1);
             }
         }
@@ -591,9 +647,9 @@ class Renderer{
 // DEMO SCENE
 
 let demoCamera = new SceneCamera(
-    new Point3D(0,-20,0),
-    500,
-    500,
+    new Point3D(0,-35,0),
+    300,
+    300,
     300 / (2 * Math.tan(70/2))
 )
 
@@ -661,3 +717,5 @@ demoScene.addLightSource(lightSource2)
 
 let renderer = new Renderer(canv,demoCamera,demoScene);
 renderer.renderScene();
+
+// Add light radius
