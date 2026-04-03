@@ -55,4 +55,16 @@ export class Point3D {
     getZ() {
         return this.#z;
     }
+
+    setX(x) {
+        this.#x = x;
+    }
+
+    setY(y) {
+        this.#y = y;
+    }
+
+    setZ(z) {
+        this.#z = z;
+    }
 }

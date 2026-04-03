@@ -11,11 +11,11 @@ export class Renderer {
     #ctx;
 
     #max_bounces = 3;
-    #samples_per_pixel = 32;
+    #samples_per_pixel = 16;
 
-    constructor(canvas, sceneCamera, scene) {
+    constructor(sceneCamera, scene) {
 
-        this.#canvas = canvas;
+        this.#canvas = document.createElement("canvas");
         this.#sceneCamera = sceneCamera;
         this.#scene = scene;
 
@@ -40,6 +40,18 @@ export class Renderer {
             dist: closestHitPoint.distanceFrom(ray.getOrigin())
 
         }
+
+    }
+
+    setSamplesPerPixel(ammount){
+
+        this.#samples_per_pixel = ammount;
+
+    }
+
+    setMaxRayBounceAmmount(ammount){
+
+        this.#max_bounces = ammount;
 
     }
 
@@ -153,6 +165,8 @@ export class Renderer {
                 this.#ctx.fillRect(x, z, 1, 1);
             }
         }
+
+        return this.#ctx.getImageData(0, 0, vpW, vpH);
 
     }
 

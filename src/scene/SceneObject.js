@@ -20,26 +20,26 @@ export class SceneObject {
     }
 
     setX(newX) {
-        this.x = newX;
+        this.center.setX(newX);
     }
 
     setY(newY) {
-        this.y = newY;
+        this.center.setY(newY);
     }
 
     setZ(newZ) {
-        this.z = newZ;
+        this.center.setZ(newZ);
     }
 
     moveX(offset) {
-        this.x += offset;
+        this.center.setX(this.center.getX() + offset);
     }
 
     moveY(offset) {
-        this.y += offset;
+        this.center.setY(this.center.getY() + offset);
     }
 
     moveZ(offset) {
-        this.z += offset;
+        this.center.setZ(this.center.getZ() + offset);
     }
 }
