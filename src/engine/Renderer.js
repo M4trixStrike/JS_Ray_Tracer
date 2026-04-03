@@ -1,0 +1,165 @@
+import { ColorRGB } from "../core/ColorRGB.js";
+import { ColorMixer } from "../core/ColorMixer.js";
+import { Ray } from "../core/Ray.js";
+import { Vector3D } from "../core/Vector3D.js";
+
+export class Renderer {
+
+    #sceneCamera;
+    #scene;
+    #canvas;
+    #ctx;
+
+    #max_bounces = 3;
+    #samples_per_pixel = 32;
+
+    constructor(canvas, sceneCamera, scene) {
+
+        this.#canvas = canvas;
+        this.#sceneCamera = sceneCamera;
+        this.#scene = scene;
+
+        this.#ctx = canvas.getContext("2d");
+
+        this.canvasInit();
+    }
+
+    #castRay(ray, object) {
+
+        let hitData = object.intersect(ray);
+
+        if (hitData == null) return null;
+
+        let closestHitPoint = ray.getPoint3D(Math.min(...hitData.hitPoints));
+
+        return {
+
+            hitPoint: closestHitPoint,
+            hitMaterial: hitData.material,
+            surfaceNormal: object.getSurfaceNormal(closestHitPoint),
+            dist: closestHitPoint.distanceFrom(ray.getOrigin())
+
+        }
+
+    }
+
+    #intersectScene(ray) {
+
+        let closestObject = null;
+        let smallestDist = Infinity;
+
+        this.#scene.getScene().forEach(sceneObject => {
+
+            let data = this.#castRay(ray, sceneObject);
+            if (data != null && data.dist < smallestDist) {
+
+                smallestDist = data.dist;
+                closestObject = data;
+
+            }
+
+        });
+
+        return closestObject;
+
+    }
+
+    #castShadowRay(hitData) {
+
+        let totalLight = new ColorRGB(0, 0, 0);
+
+        this.#scene.getSceneLight().forEach(lightSource => {
+
+            let vectorToLight = Vector3D.fromPoints3D(hitData.hitPoint, lightSource.center);
+            let distanceToLight = vectorToLight.len();
+            vectorToLight = vectorToLight.norm()
+
+
+            let shadowRay = new Ray(hitData.hitPoint.vectorMove(hitData.surfaceNormal, 0.00001), vectorToLight);
+            let obstacle = this.#intersectScene(shadowRay);
+
+            if (obstacle == null || obstacle.dist > distanceToLight) {
+
+                let lambertCosine = vectorToLight.dot(hitData.surfaceNormal);
+
+                totalLight = totalLight.addRGB(
+                    lightSource.getColor().multiply(
+                        Math.max(0, lambertCosine) * lightSource.getIntensity()
+                    )
+                );
+            }
+
+        });
+
+        return totalLight;
+    }
+
+    renderScene() {
+
+        let vpW = this.#sceneCamera.getVpWidth();
+        let vpH = this.#sceneCamera.getVpHeight();
+
+        for (let z = 0; z < vpH; z++) {
+            for (let x = 0; x < vpW; x++) {
+
+
+                let vpPoint = this.#sceneCamera.screenToVp(x, z);
+                
+
+                for (let s = 0; s < this.#samples_per_pixel; s++) {
+
+                    let ray = this.#sceneCamera.getRayJitter(vpPoint);
+                    let sampleColor = new ColorRGB(1, 1, 1); 
+                    let finalColor = new ColorRGB(0, 0, 0); 
+
+                    for (let b = 0; b < this.#max_bounces; b++) {
+                        let sceneData = this.#intersectScene(ray);
+
+                        if (sceneData == null) {
+                            sampleColor = this.#scene.getSkyboxColor().multiplyRGB(sampleColor);
+                            break;
+                        }
+
+                        let material = sceneData.hitMaterial;
+                        let reflectivity = material.getReflectivity();
+                        let albedo = ColorRGB.from(material.getAlbedo());
+
+                        let directLight = this.#castShadowRay(sceneData);
+
+                        let localColor = albedo.multiplyRGB(directLight)
+                            .multiplyRGB(sampleColor)
+                            .multiply(1 - reflectivity);
+
+                        finalColor = finalColor.addRGB(localColor);
+
+                        if (reflectivity > 0) {
+
+                            sampleColor = sampleColor.multiplyRGB(albedo).multiply(reflectivity);
+
+                            let directionVector = ray.getDirectionVector();
+                            let reflectionVector = directionVector.subtract(
+                                sceneData.surfaceNormal.multiply(2 * directionVector.dot(sceneData.surfaceNormal))
+                            ).norm();
+
+                            ray = new Ray(sceneData.hitPoint.vectorMove(sceneData.surfaceNormal, 0.0001), reflectionVector);
+                        } 
+                        else break;
+                    }
+                    ColorMixer.addColor(finalColor);
+                }
+
+                this.#ctx.fillStyle = ColorMixer.averageColors().get();
+                ColorMixer.flush();
+                this.#ctx.fillRect(x, z, 1, 1);
+            }
+        }
+
+    }
+
+    canvasInit() {
+
+        this.#canvas.width = this.#sceneCamera.getVpWidth();
+        this.#canvas.height = this.#sceneCamera.getVpHeight();
+
+    }
+}
