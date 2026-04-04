@@ -5,18 +5,22 @@ import { Vector3D } from "../core/Vector3D.js";
 export class SceneCamera {
 
     #origin;
-
     #vpDist;
     #vpHeight;
     #vpWidth;
 
-    constructor(origin, vpHeight, vpWidth, vpDist) {
+    #thetaX = 0;
+    #thetaY = 0;
+    #thetaZ = 0;
+
+    constructor(origin, resolution, FOV) {
 
         this.#origin = origin;
 
-        this.#vpHeight = vpHeight;
-        this.#vpWidth = vpWidth;
-        this.#vpDist = vpDist;
+        this.#vpHeight = resolution;
+        this.#vpWidth = resolution;
+
+        this.#vpDist = resolution / ( 2 * Math.tan( ( FOV / 2 ) * 180 / Math.PI ) );
 
     }
 
@@ -58,11 +62,54 @@ export class SceneCamera {
 
     screenToVp(x, z) {
 
+        let finalX = x - this.#vpWidth / 2;
+        let finalY = this.#vpDist;
+        let finalZ = z - this.#vpHeight / 2;
+
+        if (this.#thetaX !== 0) {
+            let tempY = finalY * Math.cos(this.#thetaX) - finalZ * Math.sin(this.#thetaX);
+            let tempZ = finalY * Math.sin(this.#thetaX) + finalZ * Math.cos(this.#thetaX);
+            finalY = tempY;
+            finalZ = tempZ;
+        }
+
+        if (this.#thetaY !== 0) {
+            let tempX = finalX * Math.cos(this.#thetaY) + finalZ * Math.sin(this.#thetaY);
+            let tempZ = -finalX * Math.sin(this.#thetaY) + finalZ * Math.cos(this.#thetaY);
+            finalX = tempX;
+            finalZ = tempZ;
+        }
+
+        if (this.#thetaZ !== 0) {
+            let tempX = finalX * Math.cos(this.#thetaZ) - finalY * Math.sin(this.#thetaZ);
+            let tempY = finalX * Math.sin(this.#thetaZ) + finalY * Math.cos(this.#thetaZ);
+            finalX = tempX;
+            finalY = tempY;
+        }
+
         return new Point3D(
-            x - this.#vpWidth / 2,
-            this.#vpDist,
-            z - this.#vpHeight / 2
-        )
+            finalX + this.#origin.getX(),
+            finalY + this.#origin.getY(),
+            finalZ + this.#origin.getZ()
+        );
+
+    }
+
+    rotateX(a){
+
+        this.#thetaX = a * Math.PI / 180;
+
+    }
+
+    rotateY(a){
+
+        this.#thetaY = a * Math.PI / 180
+
+    }
+
+    rotateZ(a){
+
+        this.#thetaZ = a * Math.PI / 180;
 
     }
 

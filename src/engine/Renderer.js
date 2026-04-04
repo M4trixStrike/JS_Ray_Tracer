@@ -83,36 +83,6 @@ export class Renderer {
 
         this.#scene.getSceneLight().forEach(lightSource => {
 
-            let vectorToLight = Vector3D.fromPoints3D(hitData.hitPoint, lightSource.center);
-            let distanceToLight = vectorToLight.len();
-            vectorToLight = vectorToLight.norm()
-
-
-            let shadowRay = new Ray(hitData.hitPoint.vectorMove(hitData.surfaceNormal, 0.00001), vectorToLight);
-            let obstacle = this.#intersectScene(shadowRay);
-
-            if (obstacle == null || obstacle.dist > distanceToLight) {
-
-                let lambertCosine = vectorToLight.dot(hitData.surfaceNormal);
-
-                totalLight = totalLight.addRGB(
-                    lightSource.getColor().multiply(
-                        Math.max(0, lambertCosine) * lightSource.getIntensity()
-                    )
-                );
-            }
-
-        });
-
-        return totalLight;
-    }
-
-    #castShadowRay2(hitData) {
-
-        let totalLight = new ColorRGB(0, 0, 0);
-
-        this.#scene.getSceneLight().forEach(lightSource => {
-
             let lightVector = Vector3D.fromPoints3D(lightSource.center,hitData.hitPoint).norm();
 
             let baseHelper = new Vector3D(Math.random(), Math.random(), Math.random());
@@ -183,7 +153,7 @@ export class Renderer {
                         let reflectivity = material.getReflectivity();
                         let albedo = ColorRGB.from(material.getAlbedo());
 
-                        let directLight = this.#castShadowRay2(sceneData);
+                        let directLight = this.#castShadowRay(sceneData);
 
                         let localColor = albedo.multiplyRGB(directLight)
                             .multiplyRGB(sampleColor)
