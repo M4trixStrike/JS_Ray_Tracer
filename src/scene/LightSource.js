@@ -4,12 +4,14 @@ export class LightSource extends SceneObject {
 
     #intensity;
     #color;
+    #radius;
 
-    constructor(center, intensity, color) {
+    constructor(center, intensity, color, radius) {
         super(center, null)
 
         this.#intensity = intensity;
         this.#color = color;
+        this.#radius = radius;
 
     }
 
@@ -22,6 +24,12 @@ export class LightSource extends SceneObject {
     getColor() {
 
         return this.#color;
+
+    }
+
+    getRadius() {
+
+        return this.#radius;
 
     }
 

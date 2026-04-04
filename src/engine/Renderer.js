@@ -2,6 +2,7 @@ import { ColorRGB } from "../core/ColorRGB.js";
 import { ColorMixer } from "../core/ColorMixer.js";
 import { Ray } from "../core/Ray.js";
 import { Vector3D } from "../core/Vector3D.js";
+import { Point3D } from "../core/Point3D.js";
 
 export class Renderer {
 
@@ -106,6 +107,52 @@ export class Renderer {
         return totalLight;
     }
 
+    #castShadowRay2(hitData) {
+
+        let totalLight = new ColorRGB(0, 0, 0);
+
+        this.#scene.getSceneLight().forEach(lightSource => {
+
+            let lightVector = Vector3D.fromPoints3D(lightSource.center,hitData.hitPoint).norm();
+
+            let baseHelper = new Vector3D(Math.random(), Math.random(), Math.random());
+
+            let ortho1 = lightVector.crossProduct(baseHelper).norm();
+            let ortho2 = lightVector.crossProduct(ortho1).norm();
+
+            let radius = Math.sqrt( Math.random() ) * lightSource.getRadius();
+
+            let theta = Math.random() * 2 * Math.PI;
+
+            let x = Math.cos(theta) * radius;
+            let y = Math.sin(theta) * radius;
+
+            let randomLightPos = lightSource.center.vectorMove(ortho1, x).vectorMove(ortho2, y);
+
+            let vectorToLight = Vector3D.fromPoints3D(hitData.hitPoint, randomLightPos);
+            let distanceToLight = vectorToLight.len();
+            vectorToLight = vectorToLight.norm()
+
+
+            let shadowRay = new Ray(hitData.hitPoint.vectorMove(hitData.surfaceNormal, 0.00001), vectorToLight);
+            let obstacle = this.#intersectScene(shadowRay);
+
+            if (obstacle == null || obstacle.dist > distanceToLight) {
+
+                let lambertCosine = vectorToLight.dot(hitData.surfaceNormal);
+
+                totalLight = totalLight.addRGB(
+                    lightSource.getColor().multiply(
+                        Math.max(0, lambertCosine) * lightSource.getIntensity()
+                    )
+                );
+            }
+
+        });
+
+        return totalLight;
+    }
+
     renderScene() {
 
         let vpW = this.#sceneCamera.getVpWidth();
@@ -136,7 +183,7 @@ export class Renderer {
                         let reflectivity = material.getReflectivity();
                         let albedo = ColorRGB.from(material.getAlbedo());
 
-                        let directLight = this.#castShadowRay(sceneData);
+                        let directLight = this.#castShadowRay2(sceneData);
 
                         let localColor = albedo.multiplyRGB(directLight)
                             .multiplyRGB(sampleColor)

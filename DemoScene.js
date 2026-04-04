@@ -26,7 +26,7 @@ let material1 = new RT.Material();
 material1.setAlbedo(
     new RT.ColorRGB(0.85, 0.15, 0.15)
 )
-material1.setReflectivity(1)
+material1.setReflectivity(0.6)
 
 let material2 = new RT.Material();
 material2.setAlbedo(
@@ -48,7 +48,13 @@ let wallB = new RT.Sphere(new RT.Point3D(0, 1010, 0), 1000, wallMaterial)
 
 let sphere1 = new RT.Sphere(new RT.Point3D(-6, -7, 7), 2.5, material1)
 let sphere2 = new RT.Sphere(new RT.Point3D(3, 2, 4), 5, material2)
-let sphere3 = new RT.Sphere(new RT.Point3D(-5, -5, 1), 3, material3)
+//let sphere3 = new RT.Sphere(new RT.Point3D(-5, -5, 1), 3, material3)
+
+let sphere3 = new RT.Sphere(new RT.Point3D(3, -7, 6), 3, material3)
+
+// x ( - l | + p)
+// y ( - t | + p)
+// z ( - g | + d)
 
 demoScene.addObject(sphere1);
 demoScene.addObject(sphere2);
@@ -63,13 +69,15 @@ demoScene.addObject(ceil);
 let lightSource1 = new RT.LightSource(
     new RT.Point3D(0, 6, -7),
     0.6,
-    new RT.ColorRGB(1, 1, 1)
+    new RT.ColorRGB(1, 1, 1),
+    0.3
 )
 
 let lightSource2 = new RT.LightSource(
     new RT.Point3D(0, -6, -7),
     0.6,
-    new RT.ColorRGB(1, 1, 1)
+    new RT.ColorRGB(1, 1, 1),
+    0.3
 )
 
 demoScene.addLightSource(lightSource1)
@@ -78,40 +86,50 @@ demoScene.addLightSource(lightSource2)
 
 let renderer = new RT.Renderer(demoCamera, demoScene);
 
+//renderer.setMaxRayBounceAmmount(4)
+//renderer.setSamplesPerPixel(32);
+
+window.requestAnimationFrame(() => {
+
+    let frame = renderer.renderScene();
+    ctx.putImageData(frame, 0, 0);
+
+});
+
 //renderer.setSamplesPerPixel(1)
 
-let renderedFrames = [];
+// let renderedFrames = [];
 
-let maxFrames = 200
+// let maxFrames = 200
 
-for(let currentFrame=0; currentFrame < maxFrames; currentFrame++){
+// for(let currentFrame=0; currentFrame < maxFrames; currentFrame++){
     
-    let t1 = Date.now();
+//     let t1 = Date.now();
     
-    let frame = renderer.renderScene();
+//     let frame = renderer.renderScene();
 
-    let delta = (Date.now() - t1) / 1000;
+//     let delta = (Date.now() - t1) / 1000;
 
-    console.log(`Rendered frame ${currentFrame + 1} of ${maxFrames} in ${delta.toFixed(2)} seconds. Approximate time to finish: ${(((maxFrames - currentFrame - 1) * delta)/60).toFixed(2)} minutes.`)
+//     console.log(`Rendered frame ${currentFrame + 1} of ${maxFrames} in ${delta.toFixed(2)} seconds. Approximate time to finish: ${(((maxFrames - currentFrame - 1) * delta)/60).toFixed(2)} minutes.`)
 
-    let x =  0.15 * Math.sin( 2 * Math.PI * ( currentFrame / (maxFrames - 1) ) )
+//     let x =  0.15 * Math.sin( 2 * Math.PI * ( currentFrame / (maxFrames - 1) ) )
 
-    sphere3.moveX( x );
+//     sphere3.moveX( x );
 
-    renderedFrames.push(frame)
-}
+//     renderedFrames.push(frame)
+// }
 
-let currentFrame = 0;
+// let currentFrame = 0;
 
-function animate(){
+// function animate(){
 
-    ctx.putImageData(renderedFrames[currentFrame], 0, 0);
+//     ctx.putImageData(renderedFrames[currentFrame], 0, 0);
 
-    currentFrame++;
+//     currentFrame++;
 
-    if(currentFrame >= renderedFrames.length) currentFrame = 0;
+//     if(currentFrame >= renderedFrames.length) currentFrame = 0;
 
-    window.requestAnimationFrame(animate);
-}
+//     window.requestAnimationFrame(animate);
+// }
 
-animate();
+// animate();

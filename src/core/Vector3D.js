@@ -28,6 +28,26 @@ export class Vector3D {
 
     }
 
+    crossProduct(v) {
+
+        return new Vector3D(
+            this.#y * v.getZ() - this.#z * v.getY(),
+            this.#z * v.getX() - this.#x * v.getZ(),
+            this.#x * v.getY() - this.#y * v.getX()
+        )
+
+    }
+
+    add(v){
+
+        return new Vector3D(
+            this.#x + v.getX(),
+            this.#y + v.getY(),
+            this.#z + v.getZ()
+        )
+
+    }
+
     norm() {
 
         return new Vector3D(
