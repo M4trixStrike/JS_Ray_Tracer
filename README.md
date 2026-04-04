@@ -41,6 +41,7 @@ This application relies on JavaScript modules to link files. Because of this, it
 ### Steps:
 **1.** Start a local development server (for example, using `Live Server`, `http-server`, or any similar tool). <br/>
 **2.** Open the project in your browser via the local server URL. <br/>
+
 There is already a demo scene included in the `DemoScene.js` file. 
 
 ## Rendering your own scene
