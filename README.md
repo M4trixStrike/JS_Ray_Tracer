@@ -1,7 +1,8 @@
 # JS Ray Tracer
 <p align="center">
-<img width="300" height="300" alt="render1" src="https://github.com/user-attachments/assets/bef8ddca-9b88-4545-9917-160a8b7da36b"/> <br/>
-(512 samples, 300x300, 4 max bounces, render time: 326 seconds)
+<img width="300" height="300" alt="JS Ray Tracer Render" src="https://github.com/user-attachments/assets/720cf76c-e37a-4bf1-8815-88e5c958c7f3" />
+<br/>
+(512 samples per pixel, 300x300, 4 max bounces, render time: 117 seconds)
 </p>
 
 This project is a simple ray tracer written in pure JavaScript. The rendering engine runs entirely on the CPU (duh). 
@@ -13,6 +14,8 @@ This project is a simple ray tracer written in pure JavaScript. The rendering en
   <li>Geometry</li>
   <ul>
     <li>Spheres</li>
+    <li>Planes</li>
+    <li>Circles</li>
   </ul>
 
   <li>Camera</li>
@@ -25,20 +28,19 @@ This project is a simple ray tracer written in pure JavaScript. The rendering en
   <ul>
     <li>Reflective materials</li>
     <li>Diffuse materials</li>
-    <li>anti-aliasing</li>
+    <li>Anti-aliasing</li>
     <li>Colored lights</li>
     <li>Area lights</li>
-    <li>Soft shadows</li>
-  </ul>
-
   </ul>
 
 </ul>
 
+
+
 ## How to run
 This application relies on JavaScript modules to link files. Because of this, it must be served over HTTP or HTTPS.
 <br/>
-### Steps:
+### Before you start:
 **1.** Start a local development server (for example, using `Live Server`, `http-server`, or any similar tool). <br/>
 **2.** Open the project in your browser via the local server URL. <br/>
 
