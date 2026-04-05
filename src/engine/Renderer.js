@@ -31,14 +31,12 @@ export class Renderer {
 
         if (hitData == null) return null;
 
-        let closestHitPoint = ray.getPoint3D(Math.min(...hitData.hitPoints));
-
         return {
 
-            hitPoint: closestHitPoint,
+            hitPoint: hitData.closestHitPoint,
             hitMaterial: hitData.material,
-            surfaceNormal: object.getSurfaceNormal(closestHitPoint),
-            dist: closestHitPoint.distanceFrom(ray.getOrigin())
+            surfaceNormal: object.getSurfaceNormal(hitData.closestHitPoint),
+            dist: hitData.closestHitPoint.distanceFrom(ray.getOrigin())
 
         }
 

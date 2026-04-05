@@ -33,8 +33,11 @@ export class Sphere extends SceneObject {
         if (t1 > 0) solution.push(t1);
         if (t2 > 0) solution.push(t2);
 
-        if (solution.length === 0) return null;
-        return { hitPoints: solution, material: this.material };
+        if (solution.length == 0) return null;
+
+        let hitPoint = ray.getPoint3D(Math.min(...solution))
+
+        return { closestHitPoint: hitPoint, material: this.material };
 
     }
 

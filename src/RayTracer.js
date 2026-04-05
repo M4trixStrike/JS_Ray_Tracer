@@ -10,3 +10,5 @@ export {ColorRGB} from "./core/ColorRGB.js";
 export {Renderer} from "./engine/Renderer.js"
 
 export {Sphere} from "./scene/objects/Sphere.js";
+export {Plane} from "./scene/objects/Plane.js";
+export {Circle} from "./scene/objects/Circle.js";

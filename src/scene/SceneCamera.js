@@ -20,7 +20,7 @@ export class SceneCamera {
         this.#vpHeight = resolution;
         this.#vpWidth = resolution;
 
-        this.#vpDist = resolution / ( 2 * Math.tan( ( FOV / 2 ) * 180 / Math.PI ) );
+        this.#vpDist = resolution / ( 2 * Math.tan( ( FOV / 2 ) * ( Math.PI / 180 ) ) );
 
     }
 

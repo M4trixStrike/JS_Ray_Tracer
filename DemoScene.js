@@ -1,4 +1,5 @@
 // DEMO SCENE
+import { Vector3D } from "./src/core/Vector3D.js";
 import * as RT from "./src/RayTracer.js";
 
 const canv = document.getElementById("canvas");
@@ -8,9 +9,9 @@ canv.width = 300;
 canv.height = 300; 
 
 let demoCamera = new RT.SceneCamera(
-    new RT.Point3D(0, 20, 0),
+    new RT.Point3D(0, -39, 0),
     300,
-    90
+    70
 )
 
 let demoScene = new RT.Scene(new RT.ColorRGB(0, 0, 0));
@@ -51,16 +52,22 @@ material5.setAlbedo(
 )
 material5.setReflectivity(0)
 
-let ceil = new RT.Sphere(new RT.Point3D(0, 0, -1020), 1000, material0)
-let wallL = new RT.Sphere(new RT.Point3D(-1020, 0, 0), 1000, material4)
-let wallR = new RT.Sphere(new RT.Point3D(1020, 0, 0), 1000, material5)
-let floor = new RT.Sphere(new RT.Point3D(0, 0, 1020), 1000, material0)
-let wallB = new RT.Sphere(new RT.Point3D(0, 1020, 0), 1000, material0)
-let wallF = new RT.Sphere(new RT.Point3D(0, -1020, 0), 1000, material0)
+let material6 = new RT.Material();
+material6.setAlbedo(
+    new RT.ColorRGB(0.85, 0.85, 0.85)
+)
+material6.setReflectivity(0)
 
-let sphere1 = new RT.Sphere(new RT.Point3D(10, -3, 14), 6, material1)
-let sphere2 = new RT.Sphere(new RT.Point3D(-6, -8, 10), 10, material2)
-let sphere3 = new RT.Sphere(new RT.Point3D(0, 2, 17), 3, material3)
+let ceil = new RT.Plane(new RT.Point3D(0, 0, -20), new Vector3D(0,0,1), material6)
+let wallL = new RT.Plane(new RT.Point3D(-20, 0, 0), new Vector3D(1,0,0), material5)
+let wallR = new RT.Plane(new RT.Point3D(20, 0, 0), new Vector3D(-1,0,0), material4)
+let floor = new RT.Plane(new RT.Point3D(0, 0, 20), new Vector3D(0,0,-1), material0)
+let wallB = new RT.Plane(new RT.Point3D(0, 20, 0), new Vector3D(0,-1,0), material6)
+let wallF = new RT.Plane(new RT.Point3D(0, -40, 0), new Vector3D(0,1,0), material6)
+
+let sphere1 = new RT.Sphere(new RT.Point3D(-10, 4, 14), 6, material1)
+let sphere2 = new RT.Sphere(new RT.Point3D(6, 7, 10), 10, material2)
+let sphere3 = new RT.Sphere(new RT.Point3D(-1, -4, 17), 3, material3)
 
 demoScene.addObject(sphere1);
 demoScene.addObject(sphere2);
@@ -71,9 +78,8 @@ demoScene.addObject(wallL);
 demoScene.addObject(wallR);
 demoScene.addObject(wallB);
 demoScene.addObject(wallF);
-
 demoScene.addObject(ceil);
-    
+
 let lightSource1 = new RT.LightSource(
     new RT.Point3D(0, 8, -9.3),
     0.6,
@@ -93,10 +99,7 @@ demoScene.addLightSource(lightSource2)
 
 let renderer = new RT.Renderer(demoCamera, demoScene);
 
-// renderer.setSamplesPerPixel(1)
-// renderer.setMaxRayBounceAmmount(2)
-
-renderer.setSamplesPerPixel(128)
+renderer.setSamplesPerPixel(512)
 renderer.setMaxRayBounceAmmount(4)
 
 window.requestAnimationFrame(() => {
