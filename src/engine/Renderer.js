@@ -2,7 +2,6 @@ import { ColorRGB } from "../core/ColorRGB.js";
 import { ColorMixer } from "../core/ColorMixer.js";
 import { Ray } from "../core/Ray.js";
 import { Vector3D } from "../core/Vector3D.js";
-import { Point3D } from "../core/Point3D.js";
 
 export class Renderer {
 
@@ -35,7 +34,7 @@ export class Renderer {
 
             hitPoint: hitData.closestHitPoint,
             hitMaterial: hitData.material,
-            surfaceNormal: object.getSurfaceNormal(hitData.closestHitPoint),
+            surfaceNormal: object.getSurfaceNormal(hitData.closestHitPoint,ray),
             dist: hitData.closestHitPoint.distanceFrom(ray.getOrigin())
 
         }

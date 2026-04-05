@@ -38,6 +38,16 @@ export class Vector3D {
 
     }
 
+    reverse(){
+
+        return new Vector3D(
+            this.#x * -1,
+            this.#y * -1,
+            this.#z * -1
+        )
+
+    }
+
     add(v){
 
         return new Vector3D(

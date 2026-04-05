@@ -17,10 +17,11 @@ export class Circle extends SceneObject {
 
     intersect(ray) {
 
-        let n = Vector3D.fromPoints3D(ray.getOrigin(),this.center).dot(this.#normal);
         let d = ray.getDirectionVector().dot(this.#normal);
+        let n = Vector3D.fromPoints3D(ray.getOrigin(),this.center).dot(this.#normal);
+    
 
-        if(n * d == 0) return null;
+        if(d == 0) return null;
 
         let t = n / d;
 
@@ -30,12 +31,16 @@ export class Circle extends SceneObject {
 
         if(this.center.distanceFrom(hitPoint) <= this.#radius) return { closestHitPoint: hitPoint, material: this.material };
         else return null;
+        
 
     }
 
-    getSurfaceNormal(point) {
+    getSurfaceNormal(point,ray) {
 
-        return this.#normal;
+        let cameraVector = ray.getDirectionVector().reverse();
+
+        if(this.#normal.dot(cameraVector) < 0) return this.#normal.reverse();
+        else return this.#normal;
 
     }
 

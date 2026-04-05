@@ -15,7 +15,7 @@ export class SceneObject {
         return null;
     }
 
-    getSurfaceNormal(point) {
+    getSurfaceNormal(point, ray) {
         return null;
     }
 

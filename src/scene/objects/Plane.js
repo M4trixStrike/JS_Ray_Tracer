@@ -28,9 +28,12 @@ export class Plane extends SceneObject {
 
     }
 
-    getSurfaceNormal(point) {
+    getSurfaceNormal(point, ray) {
 
-        return this.#normal;
+        let cameraVector = ray.getDirectionVector().reverse();
+
+        if(this.#normal.dot(cameraVector) < 0) return this.#normal.reverse();
+        else return this.#normal;
 
     }
 

@@ -60,9 +60,9 @@ material6.setReflectivity(0)
 
 let ceil = new RT.Plane(new RT.Point3D(0, 0, -20), new Vector3D(0,0,1), material6)
 let wallL = new RT.Plane(new RT.Point3D(-20, 0, 0), new Vector3D(1,0,0), material5)
-let wallR = new RT.Plane(new RT.Point3D(20, 0, 0), new Vector3D(-1,0,0), material4)
-let floor = new RT.Plane(new RT.Point3D(0, 0, 20), new Vector3D(0,0,-1), material0)
-let wallB = new RT.Plane(new RT.Point3D(0, 20, 0), new Vector3D(0,-1,0), material6)
+let wallR = new RT.Plane(new RT.Point3D(20, 0, 0), new Vector3D(1,0,0), material4)
+let floor = new RT.Plane(new RT.Point3D(0, 0, 20), new Vector3D(0,0,1), material0)
+let wallB = new RT.Plane(new RT.Point3D(0, 20, 0), new Vector3D(0,1,0), material6)
 let wallF = new RT.Plane(new RT.Point3D(0, -40, 0), new Vector3D(0,1,0), material6)
 
 let sphere1 = new RT.Sphere(new RT.Point3D(-10, 4, 14), 6, material1)

@@ -41,7 +41,7 @@ export class Sphere extends SceneObject {
 
     }
 
-    getSurfaceNormal(point) {
+    getSurfaceNormal(point, ray) {
 
         return Vector3D.fromPoints3D(this.center, point).norm();
 
