@@ -12,7 +12,7 @@ let demoCamera = new RT.SceneCamera(
     new RT.Point3D(0, -39, 0),
     300,
     70
-)
+);
 
 let demoScene = new RT.Scene(new RT.ColorRGB(0, 0, 0));
 

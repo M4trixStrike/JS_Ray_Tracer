@@ -16,6 +16,7 @@ This project is a simple ray tracer written in pure JavaScript. The rendering en
     <li>Spheres</li>
     <li>Planes</li>
     <li>Circles</li>
+    <li>Cubes</li>
   </ul>
 
   <li>Camera</li>
@@ -30,7 +31,7 @@ This project is a simple ray tracer written in pure JavaScript. The rendering en
     <li>Diffuse materials</li>
     <li>Anti-aliasing</li>
     <li>Colored lights</li>
-    <li>Area lights</li>
+    <li>Soft shadows</li>
   </ul>
 
 </ul>

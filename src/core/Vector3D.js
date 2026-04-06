@@ -48,13 +48,25 @@ export class Vector3D {
 
     }
 
-    add(v){
+    add(vector3D){
 
         return new Vector3D(
-            this.#x + v.getX(),
-            this.#y + v.getY(),
-            this.#z + v.getZ()
+            this.#x + vector3D.getX(),
+            this.#y + vector3D.getY(),
+            this.#z + vector3D.getZ()
         )
+
+    }
+
+    max(){
+
+        return Math.max(this.#x, Math.max(this.#y, this.#z))
+
+    }
+
+    min(){
+
+        return Math.min(this.#x, Math.min(this.#y, this.#z))
 
     }
 
@@ -94,6 +106,16 @@ export class Vector3D {
             this.#x - vector3D.getX(),
             this.#y - vector3D.getY(),
             this.#z - vector3D.getZ()
+        )
+
+    }
+
+    add(vector3D) {
+
+        return new Vector3D(
+            this.#x + vector3D.getX(),
+            this.#y + vector3D.getY(),
+            this.#z + vector3D.getZ()
         )
 
     }

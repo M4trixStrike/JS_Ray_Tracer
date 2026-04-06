@@ -10,7 +10,7 @@ export class Circle extends SceneObject {
 
         super(center, material)
 
-        this.#normal = normal;
+        this.#normal = normal.norm();
         this.#radius = radius
 
     }

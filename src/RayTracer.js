@@ -12,3 +12,4 @@ export {Renderer} from "./engine/Renderer.js"
 export {Sphere} from "./scene/objects/Sphere.js";
 export {Plane} from "./scene/objects/Plane.js";
 export {Circle} from "./scene/objects/Circle.js";
+export {Cube} from "./scene/objects/Cube.js";
