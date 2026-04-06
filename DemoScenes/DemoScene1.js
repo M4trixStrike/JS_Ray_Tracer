@@ -1,6 +1,6 @@
 // DEMO SCENE
-import { Vector3D } from "./src/core/Vector3D.js";
-import * as RT from "./src/RayTracer.js";
+import { Vector3D } from "../src/core/Vector3D.js";
+import * as RT from "../src/RayTracer.js";
 
 const canv = document.getElementById("canvas");
 const ctx = canv.getContext("2d");
