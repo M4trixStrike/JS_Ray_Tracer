@@ -1,11 +1,26 @@
 # JS Ray Tracer
-<p align="center">
-<img width="300" height="300" alt="JS Ray Tracer Render" src="https://github.com/user-attachments/assets/720cf76c-e37a-4bf1-8815-88e5c958c7f3" />
-<br/>
-(512 samples per pixel, 300x300, 4 max bounces, render time: 117 seconds)
-</p>
 
 This project is a simple ray tracer written in pure JavaScript. The rendering engine runs entirely on the CPU (duh). 
+
+## Demos
+
+<p align="center">
+<img width="300" height="300" alt="JS Ray Tracer Render - Spheres" src="https://github.com/user-attachments/assets/720cf76c-e37a-4bf1-8815-88e5c958c7f3" />
+<br/>
+(512 samples per pixel, 300x300, 4 max bounces, render time: 117 seconds)
+<br/>
+<br/>
+<img width="300" height="300" alt="JS Ray Tracer Render - Cubes" src="https://github.com/user-attachments/assets/7a06efc6-168a-434d-9c80-62ed21eecfc3" />
+<br/>
+(512 samples per pixel, 300x300, 4 max bounces, render time: 222 seconds)
+<br/>
+<br/>
+<img width="300" height="300" alt="Animation" src="https://github.com/user-attachments/assets/61b1a946-aac5-4e5f-a0f9-e6844cd85ba1" />
+<br/>
+(The engine can also be used to render animations)
+</p>
+
+
 
 ## Features
 
@@ -14,9 +29,9 @@ This project is a simple ray tracer written in pure JavaScript. The rendering en
   <li>Geometry</li>
   <ul>
     <li>Spheres</li>
+    <li>Cubes</li>
     <li>Planes</li>
     <li>Circles</li>
-    <li>Cubes</li>
   </ul>
 
   <li>Camera</li>
@@ -36,8 +51,6 @@ This project is a simple ray tracer written in pure JavaScript. The rendering en
 
 </ul>
 
-
-
 ## How to run
 This application relies on JavaScript modules to link files. Because of this, it must be served over HTTP or HTTPS.
 <br/>
@@ -45,9 +58,10 @@ This application relies on JavaScript modules to link files. Because of this, it
 **1.** Start a local development server (for example, using `Live Server`, `http-server`, or any similar tool). <br/>
 **2.** Open the project in your browser via the local server URL. <br/>
 
-There is already a demo scene included in the `DemoScene.js` file. 
+There are already demo scenes included in the `DemoScenes` folder. 
 
 ## Rendering your own scene
 If you want to use your own scene:
-- Replace the contents of DemoScene.js **or**
-- Create a new scene file and update the `<script>` tag in the HTML file to point to it.
+- Replace the contents of currently used demo scene **or**
+- Create a new scene file, import `RayTracer.js` and update the `<script>` tag in the HTML file to point to it.
+- `renderScene()` method returns an instance of `ImageData`
