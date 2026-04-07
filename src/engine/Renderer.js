@@ -199,7 +199,11 @@ export class Renderer {
                     ColorMixer.addColor(finalColor);
                 }
 
-                this.#ctx.fillStyle = ColorMixer.averageColors().power(1/this.#gamma).get();
+                this.#ctx.fillStyle = ColorMixer.averageColors()
+                    .power(1/this.#gamma)
+                    .add((Math.random() * 0.008) - 0.004)
+                    .get();
+                
                 ColorMixer.flush();
                 this.#ctx.fillRect(x, z, 1, 1);
             }
