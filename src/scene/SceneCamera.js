@@ -95,6 +95,12 @@ export class SceneCamera {
 
     }
 
+    getOrigin(){
+
+        return this.#origin;
+
+    }
+
     rotateX(a){
 
         this.#thetaX = a * Math.PI / 180;

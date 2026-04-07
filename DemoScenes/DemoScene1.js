@@ -26,7 +26,7 @@ let material1 = new RT.Material();
 material1.setAlbedo(
     new RT.ColorRGB(0.06, 0.48, 0.69)
 )
-material1.setReflectivity(0.3)
+material1.setReflectivity(0.3);
 
 let material2 = new RT.Material();
 material2.setAlbedo(
@@ -38,7 +38,9 @@ let material3 = new RT.Material();
 material3.setAlbedo(
     new RT.ColorRGB(0.72, 0.55, 0.13)
 )
-material3.setReflectivity(0)
+material3.setReflectivity(0.02)
+material3.setSpecularIntensity(0.5);
+material3.setPhongExponent(12)
 
 let material4 = new RT.Material();
 material4.setAlbedo(

@@ -43,6 +43,7 @@ This project is a simple ray tracer written in pure JavaScript. The rendering en
    <li>Rendering</li>
   <ul>
     <li>Reflective materials</li>
+    <li>Specular reflections</li>
     <li>Diffuse materials</li>
     <li>Anti-aliasing</li>
     <li>Colored lights</li>

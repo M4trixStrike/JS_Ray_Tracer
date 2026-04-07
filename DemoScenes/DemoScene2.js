@@ -26,43 +26,47 @@ let material1 = new RT.Material();
 material1.setAlbedo(
     new RT.ColorRGB(0.06, 0.48, 0.69)
 )
-material1.setReflectivity(0.3)
+material1.setReflectivity(0.3);
 
 let material2 = new RT.Material();
 material2.setAlbedo(
     new RT.ColorRGB(0.6, 0.3, 0.7)
 )
 material2.setReflectivity(0)
+material2.setSpecularIntensity(0.3);
+material2.setPhongExponent(30);
 
 let material3 = new RT.Material();
 material3.setAlbedo(
     new RT.ColorRGB(0.72, 0.55, 0.13)
 )
-material3.setReflectivity(0)
+material3.setReflectivity(0);
+material3.setSpecularIntensity(0.1);
+material3.setPhongExponent(10);
 
 let material4 = new RT.Material();
 material4.setAlbedo(
     new RT.ColorRGB(0.7, 0.05, 0.05)
 )
-material4.setReflectivity(0)
+material4.setReflectivity(0);
 
 let material5 = new RT.Material();
 material5.setAlbedo(
     new RT.ColorRGB(0.05, 0.7, 0.05)
 )
-material5.setReflectivity(0)
+material5.setReflectivity(0);
 
 let material6 = new RT.Material();
 material6.setAlbedo(
     new RT.ColorRGB(0.85, 0.85, 0.85)
 )
-material6.setReflectivity(0)
+material6.setReflectivity(0);
 
 let material7 = new RT.Material();
 material7.setAlbedo(
     new RT.ColorRGB(0.45, 0.65, 0.35)
 )
-material7.setReflectivity(0)
+material7.setReflectivity(0);
 
 let ceil = new RT.Plane(new RT.Point3D(0, 0, -20), new Vector3D(0,0,1), material6)
 let wallL = new RT.Plane(new RT.Point3D(-20, 0, 0), new Vector3D(1,0,0), material5)

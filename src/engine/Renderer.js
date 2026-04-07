@@ -84,8 +84,8 @@ export class Renderer {
 
             let baseHelper = new Vector3D(Math.random(), Math.random(), Math.random());
 
-            let ortho1 = lightVector.crossProduct(baseHelper).norm();
-            let ortho2 = lightVector.crossProduct(ortho1).norm();
+            let v = lightVector.crossProduct(baseHelper).norm();
+            let w = lightVector.crossProduct(v).norm();
 
             let radius = Math.sqrt( Math.random() ) * lightSource.getRadius();
 
@@ -94,23 +94,36 @@ export class Renderer {
             let x = Math.cos(theta) * radius;
             let y = Math.sin(theta) * radius;
 
-            let randomLightPos = lightSource.center.vectorMove(ortho1, x).vectorMove(ortho2, y);
+            let randomLightPos = lightSource.center.vectorMove(v, x).vectorMove(w, y);
 
             let vectorToLight = Vector3D.fromPoints3D(hitData.hitPoint, randomLightPos);
             let distanceToLight = vectorToLight.len();
             vectorToLight = vectorToLight.norm()
-
 
             let shadowRay = new Ray(hitData.hitPoint.vectorMove(hitData.surfaceNormal, 0.00001), vectorToLight);
             let obstacle = this.#intersectScene(shadowRay);
 
             if (obstacle == null || obstacle.dist > distanceToLight) {
 
-                let lambertCosine = vectorToLight.dot(hitData.surfaceNormal);
+                let material = hitData.hitMaterial;
+
+                let lambertCosine = Math.max(0,vectorToLight.dot(hitData.surfaceNormal));
+
+                let cameraVector = Vector3D.fromPoints3D(hitData.hitPoint,this.#sceneCamera.getOrigin()).norm();
+                
+                let lightReflectionVector = lightVector
+                    .subtract(
+                        hitData.surfaceNormal.multiply(
+                            2 * lightVector.dot(hitData.surfaceNormal)
+                        )
+                    )
+                    .norm();
+                
+                let phongSpecular = Math.max(0,material.getSpecularIntensity() * Math.pow(cameraVector.dot(lightReflectionVector),material.getPhongExponent()));
 
                 totalLight = totalLight.addRGB(
                     lightSource.getColor().multiply(
-                        Math.max(0, lambertCosine) * lightSource.getIntensity()
+                       (lambertCosine + phongSpecular*lambertCosine) * lightSource.getIntensity()
                     )
                 );
             }
@@ -128,9 +141,7 @@ export class Renderer {
         for (let z = 0; z < vpH; z++) {
             for (let x = 0; x < vpW; x++) {
 
-
                 let vpPoint = this.#sceneCamera.screenToVp(x, z);
-                
 
                 for (let s = 0; s < this.#samples_per_pixel; s++) {
 
@@ -150,24 +161,30 @@ export class Renderer {
                         let reflectivity = material.getReflectivity();
                         let albedo = ColorRGB.from(material.getAlbedo());
 
-                        let directLight = this.#castShadowRay(sceneData);
+                        let directionVector = ray.getDirectionVector();
+                    
+                        let directLight = this.#castShadowRay(sceneData)
 
                         let localColor = albedo.multiplyRGB(directLight)
-                            .multiplyRGB(sampleColor)
-                            .multiply(1 - reflectivity);
-
+                        .multiplyRGB(sampleColor)
+                        .multiply(1 - reflectivity);
+                            
                         finalColor = finalColor.addRGB(localColor);
 
                         if (reflectivity > 0) {
 
+                            let reflectionVector = directionVector
+                                .subtract(
+                                    sceneData.surfaceNormal.multiply(
+                                        2 * directionVector.dot(sceneData.surfaceNormal)
+                                    )
+                                )
+                                .norm();
+
                             sampleColor = sampleColor.multiplyRGB(albedo).multiply(reflectivity);
 
-                            let directionVector = ray.getDirectionVector();
-                            let reflectionVector = directionVector.subtract(
-                                sceneData.surfaceNormal.multiply(2 * directionVector.dot(sceneData.surfaceNormal))
-                            ).norm();
-
                             ray = new Ray(sceneData.hitPoint.vectorMove(sceneData.surfaceNormal, 0.0001), reflectionVector);
+                        
                         } 
                         else break;
                     }
