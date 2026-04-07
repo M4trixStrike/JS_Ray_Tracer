@@ -13,6 +13,8 @@ export class Renderer {
     #max_bounces = 3;
     #samples_per_pixel = 16;
 
+    #gamma = 2.2
+
     constructor(sceneCamera, scene) {
 
         this.#canvas = document.createElement("canvas");
@@ -38,6 +40,12 @@ export class Renderer {
             dist: hitData.closestHitPoint.distanceFrom(ray.getOrigin())
 
         }
+
+    }
+
+    setGamma(g){
+
+        this.#gamma = g;
 
     }
 
@@ -124,7 +132,7 @@ export class Renderer {
                 totalLight = totalLight.addRGB(
                     lightSource.getColor().multiply(
                        (lambertCosine + phongSpecular*lambertCosine) * lightSource.getIntensity()
-                    )
+                    ).power(this.#gamma)
                 );
             }
 
@@ -159,7 +167,7 @@ export class Renderer {
 
                         let material = sceneData.hitMaterial;
                         let reflectivity = material.getReflectivity();
-                        let albedo = ColorRGB.from(material.getAlbedo());
+                        let albedo = ColorRGB.from(material.getAlbedo()).power(this.#gamma);
 
                         let directionVector = ray.getDirectionVector();
                     
@@ -191,7 +199,7 @@ export class Renderer {
                     ColorMixer.addColor(finalColor);
                 }
 
-                this.#ctx.fillStyle = ColorMixer.averageColors().get();
+                this.#ctx.fillStyle = ColorMixer.averageColors().power(1/this.#gamma).get();
                 ColorMixer.flush();
                 this.#ctx.fillRect(x, z, 1, 1);
             }

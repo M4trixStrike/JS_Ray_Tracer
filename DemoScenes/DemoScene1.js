@@ -101,7 +101,7 @@ demoScene.addLightSource(lightSource2)
 
 let renderer = new RT.Renderer(demoCamera, demoScene);
 
-renderer.setSamplesPerPixel(512)
+renderer.setSamplesPerPixel(4)
 renderer.setMaxRayBounceAmmount(4)
 
 window.requestAnimationFrame(() => {

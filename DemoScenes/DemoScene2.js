@@ -24,7 +24,7 @@ material0.setReflectivity(0.07)
 
 let material1 = new RT.Material();
 material1.setAlbedo(
-    new RT.ColorRGB(0.06, 0.48, 0.69)
+    new RT.ColorRGB(0.06, 0.68, 0.69)
 )
 material1.setReflectivity(0.3);
 
@@ -46,7 +46,7 @@ material3.setPhongExponent(10);
 
 let material4 = new RT.Material();
 material4.setAlbedo(
-    new RT.ColorRGB(0.7, 0.05, 0.05)
+    new RT.ColorRGB(0.8, 0.05, 0.05)
 )
 material4.setReflectivity(0);
 
@@ -108,14 +108,14 @@ demoScene.addObject(ceil);
 
 let lightSource1 = new RT.LightSource(
     new RT.Point3D(0, 6, -9.3),
-    0.5,
+    0.6,
     new RT.ColorRGB(1, 1, 1),
     0.7
 )
 
 let lightSource2 = new RT.LightSource(
     new RT.Point3D(0, -6, -9.3),
-    0.5,
+    0.6,
     new RT.ColorRGB(1, 1, 1),
     0.7
 )
@@ -125,7 +125,7 @@ demoScene.addLightSource(lightSource2)
 
 let renderer = new RT.Renderer(demoCamera, demoScene);
 
-renderer.setSamplesPerPixel(512)
+renderer.setSamplesPerPixel(4)
 renderer.setMaxRayBounceAmmount(4)
 
 window.requestAnimationFrame(() => {

@@ -42,6 +42,16 @@ export class ColorRGB {
 
     }
 
+    power(e){
+
+       return new ColorRGB(
+            Math.pow(this.#r,e),
+            Math.pow(this.#g,e),
+            Math.pow(this.#b,e)
+        ) 
+
+    }
+
     averageRGB(colorRGB) {
 
         return new ColorRGB(
