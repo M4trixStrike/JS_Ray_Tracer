@@ -10,7 +10,7 @@ This project is a simple ray tracer written in pure JavaScript. The rendering en
 (512 samples per pixel, 300x300, 4 max bounces, render time: 117 seconds)
 <br/>
 <br/>
-<img width="300" height="300" alt="JS Ray Tracer Render - Cubes" src="https://github.com/user-attachments/assets/7a06efc6-168a-434d-9c80-62ed21eecfc3" />
+<img width="300" height="300" alt="JS Ray Tracer Render - Cubes" src="https://github.com/user-attachments/assets/12b6d35e-77b3-47c5-83c1-3e2a8bd169b7" />
 <br/>
 (512 samples per pixel, 300x300, 4 max bounces, render time: 222 seconds)
 <br/>
