@@ -28,6 +28,7 @@ This project is a simple ray tracer written in pure JavaScript. The rendering en
 
   <li>Geometry</li>
   <ul>
+    <li>Cylinders</li>
     <li>Spheres</li>
     <li>Cubes</li>
     <li>Planes</li>

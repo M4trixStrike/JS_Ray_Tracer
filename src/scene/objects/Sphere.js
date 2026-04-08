@@ -29,13 +29,11 @@ export class Sphere extends SceneObject {
         let t1 = (-b + Math.sqrt(delta)) / (2 * a);
         let t2 = (-b - Math.sqrt(delta)) / (2 * a);
 
-        let solution = [];
-        if (t1 > 0) solution.push(t1);
-        if (t2 > 0) solution.push(t2);
+        let solution = Math.min(t1,t2)
 
-        if (solution.length == 0) return null;
+        if (solution < 0) return null;
 
-        let hitPoint = ray.getPoint3D(Math.min(...solution))
+        let hitPoint = ray.getPoint3D(solution)
 
         return { closestHitPoint: hitPoint, material: this.material };
 
