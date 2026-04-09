@@ -49,6 +49,9 @@ This project is a simple ray tracer written in pure JavaScript. The rendering en
     <li>Anti-aliasing</li>
     <li>Colored lights</li>
     <li>Soft shadows</li>
+    <li>Gamma correction</li>
+    <li>Dithering</li>
+    <li>Per-pixel sampling</li>
   </ul>
 
 </ul>
