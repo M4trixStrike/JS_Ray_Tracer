@@ -13,6 +13,14 @@ export class Plane extends SceneObject {
 
     }
 
+    rotate(x,y,z){
+
+        this.#normal = this.#normal.rotateX(x);
+        this.#normal = this.#normal.rotateY(y);
+        this.#normal = this.#normal.rotateZ(z);
+
+    }
+
     intersect(ray) {
 
         let n = Vector3D.fromPoints3D(ray.getOrigin(),this.center).dot(this.#normal);

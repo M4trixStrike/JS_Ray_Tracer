@@ -12,6 +12,54 @@ export class Vector3D {
 
     }
 
+    rotateX(angle){
+
+        if(angle == 0) return this;
+
+        let radians = angle * ( Math.PI / 180 );
+
+        let cos = Math.cos(radians);
+        let sin = Math.sin(radians);
+
+        let newY = this.#y * cos - this.#z * sin;
+        let newZ = this.#y * sin + this.#z * cos;
+
+        return new Vector3D(this.#x, newY, newZ);
+        
+    }
+
+    rotateY(angle){
+
+        if(angle == 0) return this;
+
+        let radians = angle * ( Math.PI / 180 );
+
+        let cos = Math.cos(radians);
+        let sin = Math.sin(radians);
+
+        let newX = this.#x * cos + this.#z * sin;
+        let newZ = -this.#x * sin + this.#z * cos;
+
+        return new Vector3D(newX, this.#y, newZ);
+    
+    }
+
+    rotateZ(angle){
+
+        if(angle == 0) return this;
+
+        let radians = angle * ( Math.PI / 180 );
+
+        let cos = Math.cos(radians);
+        let sin = Math.sin(radians);
+
+        let newX = this.#x * cos - this.#y * sin
+        let newY = this.#x * sin + this.#y * cos;
+
+        return new Vector3D(newX, newY, this.#z);
+        
+    }
+
     static fromPoints3D(p1, p2) {
 
         return new Vector3D(

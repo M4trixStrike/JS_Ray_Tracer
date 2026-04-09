@@ -16,82 +16,20 @@ export class Cube extends SceneObject {
 
     }
 
-    rotateX(angle){
+    rotate(x,y,z){
 
-        if(angle == 0) return;
+        this.#u = this.#u.rotateX(x);
+        this.#u = this.#u.rotateY(y);
+        this.#u = this.#u.rotateZ(z);
 
-        let radians = angle * ( Math.PI / 180 );
+        this.#v = this.#v.rotateX(x);
+        this.#v = this.#v.rotateY(y);
+        this.#v = this.#v.rotateZ(z);
 
-        let cos = Math.cos(radians);
-        let sin = Math.sin(radians);
+        this.#w = this.#w.rotateX(x);
+        this.#w = this.#w.rotateY(y);
+        this.#w = this.#w.rotateZ(z);
 
-        const rotateHelper = (vec) => {
-            let x = vec.getX();
-            let y = vec.getY();
-            let z = vec.getZ();
-
-            let newY = y * cos - z * sin;
-            let newZ = y * sin + z * cos;
-
-            return new Vector3D(x, newY, newZ);
-        };
-
-        this.#u = rotateHelper(this.#u);
-        this.#v = rotateHelper(this.#v);
-        this.#w = rotateHelper(this.#w);
-        
-    }
-
-    rotateY(angle){
-
-        if(angle == 0) return;
-
-        let radians = angle * ( Math.PI / 180 );
-
-        let cos = Math.cos(radians);
-        let sin = Math.sin(radians);
-
-        const rotateHelper = (vec) => {
-            let x = vec.getX();
-            let y = vec.getY();
-            let z = vec.getZ();
-
-            let newX = x * cos + z * sin;
-            let newZ = -x * sin + z * cos;
-
-            return new Vector3D(newX, y, newZ);
-        };
-
-        this.#u = rotateHelper(this.#u);
-        this.#v = rotateHelper(this.#v);
-        this.#w = rotateHelper(this.#w);
-        
-    }
-
-    rotateZ(angle){
-
-        if(angle == 0) return;
-
-        let radians = angle * ( Math.PI / 180 );
-
-        let cos = Math.cos(radians);
-        let sin = Math.sin(radians);
-
-        const rotateHelper = (vec) => {
-            let x = vec.getX();
-            let y = vec.getY();
-            let z = vec.getZ();
-
-            let newX = x * cos - y * sin
-            let newY = x * sin + y * cos;
-
-            return new Vector3D(newX, newY, z);
-        };
-
-        this.#u = rotateHelper(this.#u);
-        this.#v = rotateHelper(this.#v);
-        this.#w = rotateHelper(this.#w);
-        
     }
 
 

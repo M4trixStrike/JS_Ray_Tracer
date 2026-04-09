@@ -15,6 +15,14 @@ export class Circle extends SceneObject {
 
     }
 
+    rotate(x,y,z){
+
+        this.#normal = this.#normal.rotateX(x);
+        this.#normal = this.#normal.rotateY(y);
+        this.#normal = this.#normal.rotateZ(z);
+
+    }
+
     intersect(ray) {
 
         let d = ray.getDirectionVector().dot(this.#normal);

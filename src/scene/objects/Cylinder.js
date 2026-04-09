@@ -16,64 +16,11 @@ export class Cylinder extends SceneObject {
 
     }
 
-    rotateX(angle){
+    rotate(x,y,z){
 
-        if(angle == 0) return;
-
-        let radians = angle * ( Math.PI / 180 );
-
-        let cos = Math.cos(radians);
-        let sin = Math.sin(radians);
-
-        let x = this.#axisVector.getX();
-        let y = this.#axisVector.getY();
-        let z = this.#axisVector.getZ();
-
-        let newY = y * cos - z * sin;
-        let newZ = y * sin + z * cos;
-
-        this.#axisVector = new Vector3D(x, newY, newZ);
-        
-    }
-
-    rotateY(angle){
-
-        if(angle == 0) return;
-
-        let radians = angle * ( Math.PI / 180 );
-
-        let cos = Math.cos(radians);
-        let sin = Math.sin(radians);
-
-        let x = this.#axisVector.getX();
-        let y = this.#axisVector.getY();
-        let z = this.#axisVector.getZ();
-
-        let newX = x * cos + z * sin;
-        let newZ = -x * sin + z * cos;
-
-        this.#axisVector = new Vector3D(newX, y, newZ);
-    
-    }
-
-    rotateZ(angle){
-
-        if(angle == 0) return;
-
-        let radians = angle * ( Math.PI / 180 );
-
-        let cos = Math.cos(radians);
-        let sin = Math.sin(radians);
-
-        
-        let x = this.#axisVector.getX();
-        let y = this.#axisVector.getY();
-        let z = this.#axisVector.getZ();
-
-        let newX = x * cos - y * sin
-        let newY = x * sin + y * cos;
-
-        this.#axisVector = new Vector3D(newX, newY, z);
+        this.#axisVector = this.#axisVector.rotateX(x);
+        this.#axisVector = this.#axisVector.rotateY(y);
+        this.#axisVector = this.#axisVector.rotateZ(z);
         
     }
 
