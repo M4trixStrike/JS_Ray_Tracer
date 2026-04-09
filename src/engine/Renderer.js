@@ -161,8 +161,17 @@ export class Renderer {
                         let sceneData = this.#intersectScene(ray);
 
                         if (sceneData == null) {
-                            sampleColor = this.#scene.getSkyboxColor().multiplyRGB(sampleColor);
+
+                            let skyboxDir = new Vector3D(0,0,-1);
+
+                            let similarity = ( 1 + skyboxDir.dot(ray.getDirectionVector() ) ) / 2
+
+                            let skyboxColor = this.#scene.getSkyboxColor().multiply(similarity);
+
+                            finalColor = finalColor.addRGB(skyboxColor.multiplyRGB(sampleColor))
+                            
                             break;
+                            
                         }
 
                         let material = sceneData.hitMaterial;
