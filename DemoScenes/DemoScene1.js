@@ -32,7 +32,7 @@ let material2 = new RT.Material();
 material2.setAlbedo(
     new RT.ColorRGB(1, 1, 1)
 )
-material2.setReflectivity(1)
+material2.setReflectivity(0.8)
 
 let material3 = new RT.Material();
 material3.setAlbedo(

@@ -182,9 +182,11 @@ export class Renderer {
                     
                         let directLight = this.#castShadowRay(sceneData)
 
+                        let fresnelApprox = reflectivity + ( 1 - reflectivity ) * Math.pow( ( 1 - Math.max( 0, ray.getDirectionVector().reverse().dot(sceneData.surfaceNormal) ) ), 5 );
+
                         let localColor = albedo.multiplyRGB(directLight)
                         .multiplyRGB(sampleColor)
-                        .multiply(1 - reflectivity);
+                        .multiply(1 - fresnelApprox);
                             
                         finalColor = finalColor.addRGB(localColor);
 
