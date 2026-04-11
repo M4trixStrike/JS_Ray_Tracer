@@ -5,12 +5,12 @@ This project is a simple ray tracer written in pure JavaScript. The rendering en
 ## Demos
 
 <p align="center">
-<img width="300" height="300" alt="JS Ray Tracer Render - Spheres" src="https://github.com/user-attachments/assets/720cf76c-e37a-4bf1-8815-88e5c958c7f3" />
+<img width="300" height="300" alt="render3" src="https://github.com/user-attachments/assets/aa8c975b-3a7d-440e-97af-018f0f3be3db" />
 <br/>
-(512 samples per pixel, 300x300, 4 max bounces, render time: 117 seconds)
+(512 samples per pixel, 300x300, 4 max bounces, render time: 153 seconds)
 <br/>
 <br/>
-<img width="300" height="300" alt="JS Ray Tracer Render - Cubes" src="https://github.com/user-attachments/assets/12b6d35e-77b3-47c5-83c1-3e2a8bd169b7" />
+<img width="300" height="300" alt="render4" src="https://github.com/user-attachments/assets/e1ce193f-4dc0-4a63-9971-b92edf4a4ab0" />
 <br/>
 (512 samples per pixel, 300x300, 4 max bounces, render time: 222 seconds)
 <br/>
