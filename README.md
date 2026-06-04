@@ -51,7 +51,7 @@ This project is a simple ray tracer written in pure JavaScript. The rendering en
     <li>Soft shadows</li>
     <li>Gamma correction</li>
     <li>Dithering</li>
-    <li>Per-pixel sampling</li>
+    <li>Mutlisampling</li>
   </ul>
 
 </ul>
