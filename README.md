@@ -60,8 +60,9 @@ This project is a simple ray tracer written in pure JavaScript. The rendering en
 This application relies on JavaScript modules to link files. Because of this, it must be served over HTTP or HTTPS.
 <br/>
 ### Before you start:
-**1.** Start a local development server (for example, using `Live Server`, `http-server`, or any similar tool). <br/>
-**2.** Open the project in your browser via the local server URL. <br/>
+**1.** Run the `npm install` command to download dependencies. <br/>
+**2.** Start a local development server (for example, using `Live Server`, `http-server`, or any similar tool). <br/>
+**3.** Open the project in your browser via the local server URL. <br/>
 
 There are already demo scenes included in the `DemoScenes` folder. 
 
